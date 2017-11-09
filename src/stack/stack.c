@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "stack.h"
 
+SVALUE SVALUE_ERR = -9999;
+
 STACK new_stack() {
     STACK new = NULL;
     return new;
@@ -32,4 +34,21 @@ SVALUE pop_stack(STACK *s) {
       free(temp);
     }
     return val;
+}
+
+// Printer for svalue
+void print_svalue(SVALUE val){
+    printf("stackval is: %d\n", val);
+}
+
+// Printer for stack
+void print_stack(STACK s){
+    SVALUE val;
+    STACK temp = s;
+    while (temp != NULL){
+      val = temp->data;
+      printf("%d\t",val);
+      temp = temp->head;
+    }
+    printf("\n");
 }

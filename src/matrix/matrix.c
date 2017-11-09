@@ -35,7 +35,7 @@ void mset(MATRIX *m, const MINDEX row, const MINDEX col, const MVALUE v) {
     fprintf(stderr, "ERROR: Indexing matrix outside bounds\n");
     return;
   }
-  // Find the pointer to the block of memory containing 
+  // Find the pointer to the block of memory containing
   // the matrix mat, then jump forward row number of rows
   // and col number of columns.  Inside that block of memory
   // insert the value v.
@@ -58,16 +58,18 @@ void mset(MATRIX *m, const MINDEX row, const MINDEX col, const MVALUE v) {
   // The alternative is "column-major ordering", where the
   // columns are stored contiguously in memory instead
   // (write this out on the board for comparison)
-  // 
+  //
   // Languages that use column-major ordering:
   //   FORTRAN, MATLAB, R, Julia
   //
 }
 
 MVALUE mget(const MATRIX *m, const MINDEX row, const MINDEX col) {
-  /*
-   * CODE GOES HERE
-   */
+  if (row < 0 || col < 0 || row >= m->rows || col >= m->cols) {
+    fprintf(stderr, "ERROR: Indexing matrix outside bounds\n");
+    return 0;
+  }
+  return *(m->mat + (m->cols * row) + col);
 }
 
 // Abstraction layer in case implementation of VALUE changes later
@@ -76,16 +78,37 @@ void print_value(const MVALUE v) {
 }
 
 void print_matrix(const MATRIX *m) {
-  MINDEX maxr, maxc;
+  MINDEX maxr, maxc, i ,j;
   maxr = m->rows;
   maxc = m->cols;
 
   // print values of matrix separated by tabs
   // with each row on a separate line
   printf("Matrix (rows: %d, cols: %d) \n", maxr, maxc);
-  /* 
-   * CODE GOES HERE
-   */
+  for(i=0; i < maxr; i++ ){
+      for(j=0; j < maxc; j++){
+          printf("%Lf\t",mget(m,i,j));
+      }
+      printf("\n");
+  }
 }
 
-// Implementation for add_matrix goes below
+MATRIX add_matrix(const MATRIX *m, const MATRIX *n){
+    if(m->rows != n->rows || m->cols != n->cols){
+        fprintf(stderr, "ERROR: cannot add matrices of different dimmensions");
+        return *m;
+    }
+    MINDEX maxr, maxc, i, j ;
+    maxr = m->rows;
+    maxc = m->cols;
+
+    MATRIX new = new_matrix(maxr,maxc);
+
+
+    for(i=0; i < maxr; i++ ){
+       for(j=0; j < maxc; j++){
+           mset(&new,i,j,mget(m,i,j)+mget(n,i,j));
+       }
+    }
+    return new;
+}
